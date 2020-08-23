@@ -12,6 +12,8 @@ import (
 	"github.com/nicklaw5/helix"
 )
 
+const msgPrefix = "Master "
+
 // represents a current stream, for both live updates and internal state
 type stream struct {
 	user      string        // Twitch handle (set on creation, not updated in internal state)
@@ -45,7 +47,8 @@ func newStreamFromTwitch(r *helix.Stream) *stream {
 // note: length calc (msg.run() remove) will be wrong if stream went down while program off
 func newStreamFromMsg(msg *discordgo.Message) *stream {
 	var s stream
-	s.user = msg.Embeds[0].Author.Name[:strings.IndexByte(msg.Embeds[0].Author.Name, ' ')]   // first word in author
+	nameWithoutPrefix := msg.Embeds[0].Author.Name[len(msgPrefix):]
+	s.user = nameWithoutPrefix[:strings.IndexByte(nameWithoutPrefix, ' ')]   // first word in author
 	s.title = msg.Embeds[0].Description[1:strings.IndexByte(msg.Embeds[0].Description, ']')] // "[user](link)" in description
 	s.start, err = time.Parse("2006-01-02T15:04:05-07:00", msg.Embeds[0].Timestamp)
 	ExitIfError(err)
@@ -68,7 +71,7 @@ func newStreamFromMsg(msg *discordgo.Message) *stream {
 func newMsgFromStream(s *stream, state int) *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Author: &discordgo.MessageEmbedAuthor{
-			Name:    "Master " + s.user + IfThenElse(state == 0, " is live", " was live"),
+			Name:    msgPrefix + s.user + IfThenElse(state == 0, " is live", " was live"),
 			URL:     "https://twitch.tv/" + s.user,
 			IconURL: iconURL[s.filter],
 		},
