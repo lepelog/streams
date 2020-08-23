@@ -68,7 +68,7 @@ func newStreamFromMsg(msg *discordgo.Message) *stream {
 func newMsgFromStream(s *stream, state int) *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Author: &discordgo.MessageEmbedAuthor{
-			Name:    s.user + IfThenElse(state == 0, " is live", " was live"),
+			Name:    "Master " + s.user + IfThenElse(state == 0, " is live", " was live"),
 			URL:     "https://twitch.tv/" + s.user,
 			IconURL: iconURL[s.filter],
 		},
