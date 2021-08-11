@@ -51,8 +51,11 @@ func newStreamFromTwitch(r *helix.Stream) *stream {
 // note: length calc (msg.run() remove) will be wrong if stream went down while program off
 func newStreamFromMsg(msg *discordgo.Message) *stream {
 	var s stream
-	nameWithoutPrefix := msg.Embeds[0].Author.Name[len(msgPrefix):]
-	s.user = nameWithoutPrefix[:strings.IndexByte(nameWithoutPrefix, ' ')]                        // first word in author
+	fixedUsername := msg.Embeds[0].Author.Name
+	if strings.HasPrefix(fixedUsername, msgPrefix) {
+		fixedUsername = msg.Embeds[0].Author.Name[len(msgPrefix):]
+	}
+	s.user = fixedUsername[:strings.IndexByte(fixedUsername, ' ')]                                // first word in author
 	s.urlUser = msg.Embeds[0].Author.URL[strings.LastIndexByte(msg.Embeds[0].Author.URL, '/')+1:] // last part of url
 	s.title = msg.Embeds[0].Description[1:strings.IndexByte(msg.Embeds[0].Description, ']')]      // "[user](link)" in description
 	s.start, err = time.Parse("2006-01-02T15:04:05-07:00", msg.Embeds[0].Timestamp)
