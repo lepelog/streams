@@ -19,12 +19,12 @@ import (
 // stream.go: stream struct and conversion/filter methods
 // utils.go:  macros for if, errors, env vars
 
-var err error                           // placeholder error
-var dirEnabled, twitchEnabled bool      // settings flags: guard some inits and parts of the main loop
-var twitch *helix.Client                // Twitch client
-var discord *discordgo.Session          // Discord client
-var filterTags, filterKeywords []string // Twitch tags and title keywords to filter by
-var dirLastLoad time.Time               // last time dir was loaded (0 if dir non-existent)
+var err error                                           // placeholder error
+var dirEnabled, twitchEnabled bool                      // settings flags: guard some inits and parts of the main loop
+var twitch *helix.Client                                // Twitch client
+var discord *discordgo.Session                          // Discord client
+var filterTags, filterKeywords, bannedKeywords []string // Twitch tags and title keywords to filter by
+var dirLastLoad time.Time                               // last time dir was loaded (0 if dir non-existent)
 
 // runs on program start
 func init() {
@@ -41,10 +41,20 @@ func init() {
 	if rawTags := Env.GetOrEmpty("FILTER_TAGS"); rawTags != "" {
 		filterTags = strings.Split(rawTags, ",")
 		Log.Insta <- fmt.Sprintf(". | filter tags [%d]: %s", len(filterTags), filterTags)
+	} else {
+		Log.Insta <- ". | no tag filter"
 	}
 	if rawKeywords := Env.GetOrEmpty("FILTER_KEYWORDS"); rawKeywords != "" {
 		filterKeywords = strings.Split(rawKeywords, ",")
 		Log.Insta <- fmt.Sprintf(". | filter keywords [%d]: %s", len(filterKeywords), filterKeywords)
+	} else {
+		Log.Insta <- ". | no keyword filter"
+	}
+	if rawBannedKeywords := Env.GetOrEmpty("BANNED_KEYWORDS"); rawBannedKeywords != "" {
+		bannedKeywords = strings.Split(rawBannedKeywords, ",")
+		Log.Insta <- fmt.Sprintf(". | banned keywords [%d]: %s", len(bannedKeywords), bannedKeywords)
+	} else {
+		Log.Insta <- ". | no banned keyword filter"
 	}
 	if url := Env.GetOrEmpty("MSG_ICON"); url != "" {
 		iconURL[0], iconURL[1], iconURL[2] = url, url, url
@@ -92,7 +102,7 @@ func init() {
 		ExitIfError(err)
 		getStreamsParams = helix.StreamsParams{
 			GameIDs: strings.Split(Env.GetOrExit("GAME_ID"), ","), // list of games to query
-			First:   100,                                // maximum query results (limit is 100)
+			First:   100,                                          // maximum query results (limit is 100)
 		}
 	}
 

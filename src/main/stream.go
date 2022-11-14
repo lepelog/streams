@@ -106,8 +106,14 @@ func filterStream(r *helix.Stream) bool {
 			}
 		}
 	}
-	// check keywords
+	// check banned keywords
 	title := strings.ToLower(r.Title)
+	for _, bannedKeyword := range bannedKeywords {
+		if strings.Contains(title, bannedKeyword) {
+			return false
+		}
+	}
+	// check keywords
 	for _, keyword := range filterKeywords {
 		if strings.Contains(title, keyword) {
 			return true

@@ -26,12 +26,18 @@ dir <optional-comment-here-with-no-newlines>
 ```
 
 **Filtering**  
-The dir tables inherently filter which Discord users get assigned a role. A message channel can also be filtered. This means it accepts only streams whose users are in dir or whose tags/titles match a list of tags/keywords. E.g.
+The dir tables inherently filter which Discord users get assigned a role. A message channel can also be filtered. This means it accepts only streams whose users are in dir or whose tags/titles match a list of tags/keywords. The keywords have to be lowercase E.g.
 ```
 FILTER_TAGS=7cefbf30-4c3e-4aa7-99cd-70aabb662f27
 FILTER_KEYWORDS=speedrun,any%,all dungeons,glitchless,race,mss,pausa,practice
 ```
 *(that's the Speedrun tag.)*
+
+It is also possible to reject all streams with a specific keyword in them. If a title matches both filter keywords and banned keywords, it
+will not be accepted.
+```
+BANNED_KEYWORDS=rando,casual
+```
 
 **Deployment**  
 The bot is designed to run locally and on persistent/non-persistent VPS/PaaS, so there's console logging to one sink but no file logging, and config (see section below) [stored outside Git](https://12factor.net/config). The bot persists its state when it starts by reading its own message channels and by finding which users currently have the role, so is robust against being restarted at any time.
@@ -71,7 +77,7 @@ The settings are:
 * **ROLE** – ID of Discord streams role.
 * **ROLE_SERVER** – ID of Discord server containing streams role.
 * **TWICORD_CHANNEL** – ID of Discord channel for loading dir directory.
-* **FILTER_TAGS** – list of Twitch tags to filter streams for (in UUID format), separated by commas, no spaces.
+* **FILTER_TAGS** – list of Twitch tags to filter streams for (in UUID format), separated by commas, no spaces. Empty to not filter tags
 * **FILTER_KEYWORDS** – list of substrings to filter stream titles for, separated by commas, no spaces.
 
 ## Pix
