@@ -54,9 +54,6 @@ func add(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 			m.User.ID,                     // <Discord user>
 			m.Status,                      // offline/online/idle/dnd
 		))
-		if m.Game != nil { // get activities from game field
-			printGame('g', m.Game)
-		}
 		for _, a := range m.Activities { // get activities from activities field
 			printGame('a', a)
 		}
@@ -64,8 +61,8 @@ func add(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 	}
 }
 
-func printGame(t rune, g *discordgo.Game) {
-	write(fmt.Sprintf("%c, %d, %40s, %70s, %60s, %30s, %d, %s, %13v, %v\n",
+func printGame(t rune, g *discordgo.Activity) {
+	write(fmt.Sprintf("%c, %d, %40s, %70s, %60s, %30s, %t, %s, %13v, %v\n",
 		t,               // g/a
 		g.Type,          // 1 (= Streaming)
 		g.Name,          // "Twitch"
@@ -74,7 +71,7 @@ func printGame(t rune, g *discordgo.Game) {
 		g.URL,           // <url>
 		g.Instance,      // 0
 		g.ApplicationID, // ""
-		g.TimeStamps,    // {0, 0}
+		g.Timestamps,    // {0, 0}
 		g.Assets,        // {"twitch:<handle>", "", "", ""}
 	))
 }

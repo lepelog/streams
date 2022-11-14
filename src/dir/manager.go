@@ -73,7 +73,7 @@ func add(s *discordgo.Session, pu *discordgo.PresenceUpdate) {
 	for _, a := range pu.Activities {
 		filter := pu.GuildID == serverID &&
 			a.Name == "Twitch" &&
-			a.Type == discordgo.GameTypeStreaming &&
+			a.Type == discordgo.ActivityTypeGame &&
 			a.State == gameName
 		if filter {
 			k, v := a.URL[strings.LastIndex(a.URL, "/")+1:], pu.User.ID

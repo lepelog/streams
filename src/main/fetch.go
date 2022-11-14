@@ -45,11 +45,11 @@ func fetch() (map[string]*stream, error) {
 // blocking http request to renew Twitch auth token if required, retry until success
 func auth() {
 	for !authed {
-		res, err := twitch.GetAppAccessToken(nil) // make api call
+		res, err := twitch.RequestAppAccessToken(nil) // make api call
 		if err == nil {
 			twitch.SetAppAccessToken(res.Data.AccessToken)
 			authed = true
-			Log.Insta <- fmt.Sprintf("< | a: %s", res.Data.AccessToken)
+			Log.Insta <- "< | app token aquired"
 		} else {
 			Log.Insta <- fmt.Sprintf("x | <a : %s", err)
 			time.Sleep(20 * time.Second)

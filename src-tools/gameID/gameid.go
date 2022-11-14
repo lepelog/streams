@@ -36,7 +36,7 @@ func init() {
 		ClientSecret: Env.GetOrExit("TWITCH_SEC"),
 	})
 	ExitIfError(err)
-	res, err := twitch.GetAppAccessToken(nil)
+	res, err := twitch.RequestAppAccessToken(nil)
 	ExitIfError(err)
 	twitch.SetAppAccessToken(res.Data.AccessToken)
 }
