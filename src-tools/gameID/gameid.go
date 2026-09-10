@@ -8,7 +8,7 @@ import (
 	"os"
 
 	. "github.com/Pyorot/streams/src/utils"
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 )
 
 var err error            // placeholder error

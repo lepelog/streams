@@ -7,7 +7,7 @@ import (
 
 	. "github.com/Pyorot/streams/src/utils"
 
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 )
 
 var getStreamsParams helix.StreamsParams // the const argument for getStreams calls, initialised in main.go:init()
