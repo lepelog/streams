@@ -19,12 +19,13 @@ import (
 // stream.go: stream struct and conversion/filter methods
 // utils.go:  macros for if, errors, env vars
 
-var err error                                           // placeholder error
-var dirEnabled, twitchEnabled bool                      // settings flags: guard some inits and parts of the main loop
-var twitch *helix.Client                                // Twitch client
-var discord *discordgo.Session                          // Discord client
-var filterTags, filterKeywords, bannedKeywords []string // Twitch tags and title keywords to filter by
-var dirLastLoad time.Time                               // last time dir was loaded (0 if dir non-existent)
+var err error                           // placeholder error
+var dirEnabled, twitchEnabled bool      // settings flags: guard some inits and parts of the main loop
+var twitch *helix.Client                // Twitch client
+var discord *discordgo.Session          // Discord client
+var filterTags, filterKeywords []string // Twitch tags and title keywords to filter by
+var blockTags, blockKeywords []string   // Twitch tags and title keywords to remove even if filter* options match
+var dirLastLoad time.Time               // last time dir was loaded (0 if dir non-existent)
 
 // runs on program start
 func init() {
@@ -50,11 +51,13 @@ func init() {
 	} else {
 		Log.Insta <- ". | no keyword filter"
 	}
-	if rawBannedKeywords := Env.GetOrEmpty("BANNED_KEYWORDS"); rawBannedKeywords != "" {
-		bannedKeywords = strings.Split(rawBannedKeywords, ",")
-		Log.Insta <- fmt.Sprintf(". | banned keywords [%d]: %s", len(bannedKeywords), bannedKeywords)
-	} else {
-		Log.Insta <- ". | no banned keyword filter"
+	if rawBlockTags := Env.GetOrEmpty("BLOCK_TAGS"); rawBlockTags != "" {
+		blockTags = strings.Split(rawBlockTags, ",")
+		Log.Insta <- fmt.Sprintf(". | block tags [%d]: %s", len(blockTags), blockTags)
+	}
+	if rawBlockKeywords := Env.GetOrEmpty("BLOCK_KEYWORDS"); rawBlockKeywords != "" {
+		blockKeywords = strings.Split(rawBlockKeywords, ",")
+		Log.Insta <- fmt.Sprintf(". | block keywords [%d]: %s", len(blockKeywords), blockKeywords)
 	}
 	if url := Env.GetOrEmpty("MSG_ICON"); url != "" {
 		iconURL[0], iconURL[1], iconURL[2] = url, url, url
@@ -127,9 +130,9 @@ func main() {
 			new, err := fetch() // synchronous Twitch http call
 			if err == nil {
 				Log.Bkgd <- fmt.Sprintf("< | %s", now.Format("15:04:05"))
-				// prune blocked names
-				for user := range new {
-					if dir.IsBlocked(user) {
+				// prune blocked streams
+				for user, stream := range new {
+					if dir.IsBlocked(user) || stream.filter == -1 {
 						delete(new, user)
 					}
 				}
