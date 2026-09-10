@@ -107,14 +107,14 @@ func calcFilter(r *helix.Stream) int {
 // called only in newStreamFromTwitch – the filter is run on incoming data and used only when a new msg is made
 func filterStream(r *helix.Stream, tags []string, keywords []string) bool {
 	// check tags
-	for _, tag1 := range r.TagIDs {
+	for _, tag1 := range r.Tags {
 		for _, tag2 := range tags {
-			if tag1 == tag2 {
+			if strings.ToLower(tag1) == tag2 {
 				return true
 			}
 		}
 	}
-	// check banned keywords
+	// check keywords
 	title := strings.ToLower(r.Title)
 	for _, keyword := range keywords {
 		if strings.Contains(title, keyword) {

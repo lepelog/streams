@@ -40,7 +40,7 @@ func init() {
 
 	// filters + icons (sync, all optional)
 	if rawTags := Env.GetOrEmpty("FILTER_TAGS"); rawTags != "" {
-		filterTags = strings.Split(rawTags, ",")
+		filterTags = strings.Split(strings.ToLower(rawTags), ",")
 		Log.Insta <- fmt.Sprintf(". | filter tags [%d]: %s", len(filterTags), filterTags)
 	} else {
 		Log.Insta <- ". | no tag filter"
@@ -52,7 +52,7 @@ func init() {
 		Log.Insta <- ". | no keyword filter"
 	}
 	if rawBlockTags := Env.GetOrEmpty("BLOCK_TAGS"); rawBlockTags != "" {
-		blockTags = strings.Split(rawBlockTags, ",")
+		blockTags = strings.Split(strings.ToLower(rawBlockTags), ",")
 		Log.Insta <- fmt.Sprintf(". | block tags [%d]: %s", len(blockTags), blockTags)
 	}
 	if rawBlockKeywords := Env.GetOrEmpty("BLOCK_KEYWORDS"); rawBlockKeywords != "" {

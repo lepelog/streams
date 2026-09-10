@@ -31,14 +31,14 @@ dir <optional-comment-here-with-no-newlines>
 **Filtering**  
 The dir tables inherently filter which Discord users get assigned a role. A message channel can also be filtered. This means it accepts only streams whose users are in dir or whose tags/titles match a list of tags/keywords. The keywords have to be lowercase E.g.
 ```
-FILTER_TAGS=7cefbf30-4c3e-4aa7-99cd-70aabb662f27
+FILTER_TAGS=speedrun
 FILTER_KEYWORDS=speedrun,any%,all dungeons,glitchless,race,mss,pausa,practice
 ```
-*(that's the Speedrun tag.)*
 
-It is also possible to reject all streams with a specific keyword in them. If a title matches both filter keywords and banned keywords, it
+It is also possible to reject all streams with a specific tag or keyword in the title. If a title matches both filter keywords and banned keywords, it
 will not be accepted.
 ```
+BLOCK_TAGS=casual
 BLOCK_KEYWORDS=rando,casual
 ```
 
