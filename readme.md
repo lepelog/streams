@@ -39,7 +39,7 @@ FILTER_KEYWORDS=speedrun,any%,all dungeons,glitchless,race,mss,pausa,practice
 It is also possible to reject all streams with a specific keyword in them. If a title matches both filter keywords and banned keywords, it
 will not be accepted.
 ```
-BANNED_KEYWORDS=rando,casual
+BLOCK_KEYWORDS=rando,casual
 ```
 
 **Deployment**  
